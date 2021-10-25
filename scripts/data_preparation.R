@@ -3,10 +3,9 @@ rm(list = ls())
 library(tidyverse)
 library(haven)
 library(lme4)
-library(ggstatsplot)
 library(sjstats)
 
-setwd("C:/R/Master thesis")
+setwd("C:/R/age_gap")
  
 data <- read_dta("data/thesis_data.dta") %>% 
   janitor::clean_names()
@@ -59,9 +58,6 @@ odds_ratios <-function(model){
 }
 
 ###################### descriptive #########################
-chisq.test(data$fevtreat,data$agediff5)
-chisq.test(data$measles,data$agediff5)
-chisq.test(data$underweight,data$agediff5)
 
 data_fevtreat %>% group_by(agediff5) %>% 
   count(fevtreat,wt=perweight) %>% pivot_wider(values_from=n,names_from=fevtreat) %>% 
@@ -74,24 +70,6 @@ data_measles %>% group_by(agediff5) %>%
 data_underweight %>% group_by(agediff5) %>% 
   count(underweight,wt=perweight) %>% pivot_wider(values_from=n,names_from=underweight) %>% 
   mutate(percent=Underweight/(Underweight+`Normal weight`)*100)
-
-data %>% gghistostats(agediff)
-ggsave("output/agediff_dist.png",width=12,height=7)
-
-data_fevtreat %>% 
-  ggbarstats(x=fevtreat,y=agediff5, 
-                                 xlab="Parental age gap")
-ggsave("output/fevtreat_desc.png",width=12,height=7)
-
-data_measles %>% 
-  ggbarstats(x=measles,y=agediff5, 
-                                 xlab="Parental age gap")
-ggsave("output/measles_desc.png",width=12,height=7)
-
-data_underweight %>% 
-  ggbarstats(x=underweight,y=agediff5, 
-                                 xlab="Parental age gap")
-ggsave("output/underweight_desc.png",width=12,height=7)
 
 ###################### change ref cat. ###########################
 data <- data %>% 
@@ -108,19 +86,19 @@ data_underweight <- data_underweight %>%
 fevtreat_model <- glmer(fevtreat~agediff5+
                           (1|respondent)+(1|country), data=data_fevtreat, nAGQ=0,
                         family=binomial(link="logit"), weights=perweight)
-fevtreat_icc <- performance::icc(fevtreat_model,by_group=TRUE)
+# fevtreat_icc <- performance::icc(fevtreat_model,by_group=TRUE)
 
 ## measles vaccination
 measles_model <- glmer(measles~agediff5+
                          (1|respondent)+(1|country), nAGQ=0, data=data_measles,
                        family=binomial(link="logit"), weights=perweight)
-measles_icc <- performance::icc(measles_model,by_group=TRUE)
+# measles_icc <- performance::icc(measles_model,by_group=TRUE)
 
 ## underweight
 underweight_model <- glmer(underweight~agediff5+
                              (1|respondent)+(1|country), data=data_underweight, nAGQ=0,
                            family=binomial(link="logit"), weights=perweight)
-underweight_icc <- performance::icc(underweight_model,by_group=TRUE)
+# underweight_icc <- performance::icc(underweight_model,by_group=TRUE)
 
 ## save as odds ratios
 or <- left_join(as_tibble(odds_ratios(fevtreat_model),rownames="term"),
@@ -135,36 +113,33 @@ or <- left_join(as_tibble(odds_ratios(fevtreat_model),rownames="term"),
          ci_underweight=paste(Estunderweight, " ", "(", LLunderweight, "-", ULunderweight, ")",sep="")) %>% 
   select(term,ci_fevtreat,ci_measles,ci_underweight)
 
-icc <- left_join(as_tibble(as_tibble(fevtreat_icc)),
-          as_tibble(as_tibble(measles_icc)), 
-          by="Group", suffix=c("_fevtreat","_measles")) %>% 
-  left_join(as_tibble(as_tibble(underweight_icc)) %>% 
-              rename("ICC_underweight"="ICC"), by="Group") %>% 
-  mutate_at(vars(-Group),round,3)
-
-write_csv2(as.data.frame(or),"output/reg_results_onlyagegap.csv")
-write_csv2(as.data.frame(icc),"output/icc_onlyagegap.csv")
+# icc <- left_join(as_tibble(as_tibble(fevtreat_icc)),
+#           as_tibble(as_tibble(measles_icc)), 
+#           by="Group", suffix=c("_fevtreat","_measles")) %>% 
+#   left_join(as_tibble(as_tibble(underweight_icc)) %>% 
+#               rename("ICC_underweight"="ICC"), by="Group") %>% 
+#   mutate_at(vars(-Group),round,3)
 
 #################### children models #########################
 ## fever treatment
 fevtreat_model <- glmer(fevtreat~agediff5+kidsex+kidcurage+kidbord+
                           (1|respondent)+(1|country), data=data_fevtreat, nAGQ=0,
                         family=binomial(link="logit"), weights=perweight)
-fevtreat_icc <- performance::icc(fevtreat_model,by_group=TRUE)
+# fevtreat_icc <- performance::icc(fevtreat_model,by_group=TRUE)
 
 ## measeles vaccination
 measles_model <- glmer(measles~agediff5+kidsex+kidcurage+kidbord+
                          (1|respondent)+(1|country), nAGQ=0,
                        data=data_measles,
                        family=binomial(link="logit"), weights=perweight)
-measles_icc <- performance::icc(measles_model,by_group=TRUE)
+# measles_icc <- performance::icc(measles_model,by_group=TRUE)
 
 
 ## underweight
 underweight_model <- glmer(underweight~agediff5+kidsex+kidcurage+kidbord+
                              (1|respondent)+(1|country), data=data_underweight, nAGQ=0,
                            family=binomial(link="logit"), weights=perweight)
-underweight_icc <- performance::icc(underweight_model,by_group=TRUE)
+# underweight_icc <- performance::icc(underweight_model,by_group=TRUE)
 
 ## save as odds ratios
 or <- left_join(as_tibble(odds_ratios(fevtreat_model),rownames="term"),
@@ -179,15 +154,13 @@ or <- left_join(as_tibble(odds_ratios(fevtreat_model),rownames="term"),
          ci_underweight=paste(Estunderweight, " ", "(", LLunderweight, "-", ULunderweight, ")",sep="")) %>% 
   select(term,ci_fevtreat,ci_measles,ci_underweight)
 
-icc <- left_join(as_tibble(as_tibble(fevtreat_icc)),
-                 as_tibble(as_tibble(measles_icc)), 
-                 by="Group", suffix=c("_fevtreat","_measles")) %>% 
-  left_join(as_tibble(as_tibble(underweight_icc)) %>% 
-              rename("ICC_underweight"="ICC"), by="Group") %>% 
-  mutate_at(vars(-Group),round,3)
+# icc <- left_join(as_tibble(as_tibble(fevtreat_icc)),
+#                  as_tibble(as_tibble(measles_icc)), 
+#                  by="Group", suffix=c("_fevtreat","_measles")) %>% 
+#   left_join(as_tibble(as_tibble(underweight_icc)) %>% 
+#               rename("ICC_underweight"="ICC"), by="Group") %>% 
+#   mutate_at(vars(-Group),round,3)
 
-write_csv2(as.data.frame(or),"output/reg_results_children.csv")
-write_csv2(as.data.frame(icc),"output/icc_children.csv")
 
 ##################### main models ##########################
 ## fever treatment
@@ -195,10 +168,9 @@ fevtreat_model <- glmer(fevtreat~agediff5+kidsex+kidcurage+kidbord+poly+
                                   mage+educlvl+husedlvl+wealthq+urban+
                                   (1|respondent)+(1|country), data=data_fevtreat, nAGQ=0,
                                 family=binomial(link="logit"), weights=perweight)
-fevtreat_icc <- performance::icc(fevtreat_model,by_group=TRUE)
-fevtreat_res <- ggcoefstats(fevtreat_model,
-            exclude.intercept=T,stats.labels=F)
-ggsave("output/fevtreat_res.png",plot=fevtreat_res,width=7,height=10)
+# fevtreat_icc <- performance::icc(fevtreat_model,by_group=TRUE)
+# fevtreat_res <- ggcoefstats(fevtreat_model,
+#             exclude.intercept=T,stats.labels=F)
 
 ## measeles vaccination
 measles_model <- glmer(measles~agediff5+kidsex+kidcurage+kidbord+poly+
@@ -206,20 +178,18 @@ measles_model <- glmer(measles~agediff5+kidsex+kidcurage+kidbord+poly+
                                  (1|respondent)+(1|country), nAGQ=0,
                                data=data_measles,
                                family=binomial(link="logit"), weights=perweight)
-measles_icc <- performance::icc(measles_model,by_group=TRUE)
-measles_res <- ggcoefstats(measles_model,
-            exclude.intercept=T,stats.labels=F)
-ggsave("output/measles_res.png",plot=measles_res,width=7,height=10)
+# measles_icc <- performance::icc(measles_model,by_group=TRUE)
+# measles_res <- ggcoefstats(measles_model,
+#             exclude.intercept=T,stats.labels=F)
 
 ## underweight
 underweight_model <- glmer(underweight~agediff5+kidsex+kidcurage+kidbord+poly+
                                      mage+educlvl+husedlvl+wealthq+urban+
                                      (1|respondent)+(1|country), data=data_underweight, nAGQ=0,
                                    family=binomial(link="logit"), weights=perweight)
-underweight_icc <- performance::icc(underweight_model,by_group=TRUE)
-underweight_res <- ggcoefstats(underweight_model,
-            exclude.intercept=T,stats.labels=F)
-ggsave("output/underweight_res.png",plot=underweight_res,width=7,height=10)
+# underweight_icc <- performance::icc(underweight_model,by_group=TRUE)
+# underweight_res <- ggcoefstats(underweight_model,
+#             exclude.intercept=T,stats.labels=F)
 
 ## save as odds ratios
 or <- left_join(as_tibble(odds_ratios(fevtreat_model),rownames="term"),
@@ -234,12 +204,9 @@ or <- left_join(as_tibble(odds_ratios(fevtreat_model),rownames="term"),
          ci_underweight=paste(Estunderweight, " ", "(", LLunderweight, "-", ULunderweight, ")",sep="")) %>% 
   select(term,ci_fevtreat,ci_measles,ci_underweight)
 
-icc <- left_join(as_tibble(as_tibble(fevtreat_icc)),
-                 as_tibble(as_tibble(measles_icc)), 
-                 by="Group", suffix=c("_fevtreat","_measles")) %>% 
-  left_join(as_tibble(as_tibble(underweight_icc)) %>% 
-              rename("ICC_underweight"="ICC"), by="Group") %>% 
-  mutate_at(vars(-Group),round,3)
-
-write_csv2(as.data.frame(or),"output/reg_results_main.csv")
-write_csv2(as.data.frame(icc),"output/icc_main.csv")
+# icc <- left_join(as_tibble(as_tibble(fevtreat_icc)),
+#                  as_tibble(as_tibble(measles_icc)), 
+#                  by="Group", suffix=c("_fevtreat","_measles")) %>% 
+#   left_join(as_tibble(as_tibble(underweight_icc)) %>% 
+#               rename("ICC_underweight"="ICC"), by="Group") %>% 
+#   mutate_at(vars(-Group),round,3)

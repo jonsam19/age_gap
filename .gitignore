@@ -3,3 +3,5 @@
 *.Rda
 *.dta
 .Rproj.user
+.Rhistory
+.Rhistory
