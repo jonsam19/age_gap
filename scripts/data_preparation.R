@@ -39,16 +39,7 @@ data <- data %>% select(country, year, wifenum, kidalive, perweight,
          lowbw=as_factor(lowbw)) %>% 
   zap_labels()
 
-data_fevtreat <- data %>% filter(!is.na(fevtreat) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &
-                                   !is.na(kidbord) & !is.na(poly) & !is.na(mage) & !is.na(educlvl) &
-                                   !is.na(husedlvl) & !is.na(wealthq) & !is.na(urban) & !is.na(kidcurage))
-data_measles <- data %>% filter(!is.na(measles) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &
-                                  !is.na(kidbord) & !is.na(poly) & !is.na(mage) & !is.na(educlvl) &
-                                  !is.na(husedlvl) & !is.na(wealthq) & !is.na(urban) & !is.na(kidcurage) &
-                                  kidcurage!="less than 1 year")
-data_underweight <- data %>% filter(!is.na(underweight) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &
-                                      !is.na(kidbord) & !is.na(poly) & !is.na(mage) & !is.na(educlvl) &
-                                      !is.na(husedlvl) & !is.na(wealthq) & !is.na(urban) & !is.na(kidcurage))
+write.csv2(data, "data/analysis_data.csv",row.names=FALSE)
 
 ################################### functions #################################
 odds_ratios <-function(model){
