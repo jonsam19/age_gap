@@ -26,8 +26,12 @@ ui <- fluidPage(
                tabPanel("Descriptive",
                         
                         sidebarPanel(h4("Percentage"),
+                                     radioButtons("health_outcome", "Select health outcome",
+                                                  choices=list("Fever treatment"="fevtreat",
+                                                               "Measles vaccination"="measles",
+                                                               "Underweight"="underweight")),
                                      selectInput("country", "Select country",
-                                                 choices=countries)),
+                                                 choices=c("All",countries))),
                         mainPanel(plotlyOutput("descriptive_plot"))),
                
     )
@@ -35,11 +39,53 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
     
+    
+    
     descriptive_plot <- reactive(
-        data_fevtreat %>% filter(country==input$country) %>% group_by(agediff5) %>% 
-            count(fevtreat,wt=perweight) %>% pivot_wider(values_from=n,names_from=fevtreat) %>% 
-            mutate(percent=`Received treatment`/(`No treatment`+`Received treatment`)*100) %>% 
-            ggplot(aes(agediff5,percent)) + geom_bar(stat="identity")
+        
+            if (input$health_outcome == "fevtreat"){
+                if(input$country=="All"){
+                    data_fevtreat %>% group_by(agediff5) %>% 
+                        count(fevtreat,wt=perweight) %>% pivot_wider(values_from=n,names_from=fevtreat) %>% 
+                        mutate(percent=`Received treatment`/(`No treatment`+`Received treatment`)*100) %>% 
+                        ggplot(aes(agediff5,percent)) + geom_bar(stat="identity")
+                    
+                }else{
+                    data_fevtreat %>% filter(country==input$country) %>% group_by(agediff5) %>% 
+                        count(fevtreat,wt=perweight) %>% pivot_wider(values_from=n,names_from=fevtreat) %>% 
+                        mutate(percent=`Received treatment`/(`No treatment`+`Received treatment`)*100) %>% 
+                        ggplot(aes(agediff5,percent)) + geom_bar(stat="identity")
+                }
+            }
+            else if (input$health_outcome == "measles"){
+                if(input$country=="All"){
+                    data_measles %>% group_by(agediff5) %>% 
+                        count(measles,wt=perweight) %>% pivot_wider(values_from=n,names_from=measles) %>% 
+                        mutate(percent=`Vaccinated`/(`Not vaccinated`+`Vaccinated`)*100) %>% 
+                        ggplot(aes(agediff5,percent)) + geom_bar(stat="identity")
+                    
+                }else{
+                    data_measles %>% filter(country==input$country) %>% group_by(agediff5) %>% 
+                        count(measles,wt=perweight) %>% pivot_wider(values_from=n,names_from=measles) %>% 
+                        mutate(percent=`Vaccinated`/(`Not vaccinated`+`Vaccinated`)*100) %>% 
+                        ggplot(aes(agediff5,percent)) + geom_bar(stat="identity")
+                }
+            } else {
+                if(input$country=="All"){
+                    data_underweight %>% group_by(agediff5) %>% 
+                        count(underweight,wt=perweight) %>% pivot_wider(values_from=n,names_from=underweight) %>% 
+                        mutate(percent=`Underweight`/(`Normal weight`+`Underweight`)*100) %>% 
+                        ggplot(aes(agediff5,percent)) + geom_bar(stat="identity")
+                    
+                }else{
+                    data_underweight %>% filter(country==input$country) %>% group_by(agediff5) %>% 
+                        count(underweight,wt=perweight) %>% pivot_wider(values_from=n,names_from=underweight) %>% 
+                        mutate(percent=`Underweight`/(`Normal weight`+`Underweight`)*100) %>% 
+                        ggplot(aes(agediff5,percent)) + geom_bar(stat="identity")
+                }
+            
+        }
+        
     )
     
     output$descriptive_plot <- renderPlotly(ggplotly(descriptive_plot()))
