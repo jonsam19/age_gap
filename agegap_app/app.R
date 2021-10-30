@@ -16,7 +16,7 @@ setwd(PATH)
 
 source("agegap_app/prepare_data.R")
 
-countries = unique(data_fevtreat$country) %>% as.vector()
+countries = unique(data_fevtreat$country) %>% as.vector() %>% sort()
 
 
 ui <- fluidPage(
@@ -34,6 +34,8 @@ ui <- fluidPage(
                                                  choices=c("All",countries))),
                         mainPanel(plotlyOutput("descriptive_plot"))),
                
+               tabPanel("Model results")
+               
     )
 )
 
@@ -48,7 +50,10 @@ server <- function(input, output, session) {
                     data_fevtreat %>% group_by(agediff5) %>% 
                         count(fevtreat,wt=perweight) %>% pivot_wider(values_from=n,names_from=fevtreat) %>% 
                         mutate(percent=`Received treatment`/(`No treatment`+`Received treatment`)*100) %>% 
-                        ggplot(aes(agediff5,percent)) + geom_bar(stat="identity")
+                        ggplot(aes(agediff5,percent,fill=agediff5)) + geom_bar(stat="identity") +
+                        theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+                              panel.background = element_blank(), legend.title =element_blank()) +
+                        ylab("% treated for fever") + xlab("Parental age difference")
                     
                 }else{
                     data_fevtreat %>% filter(country==input$country) %>% group_by(agediff5) %>% 
@@ -64,7 +69,7 @@ server <- function(input, output, session) {
                         mutate(percent=`Vaccinated`/(`Not vaccinated`+`Vaccinated`)*100) %>% 
                         ggplot(aes(agediff5,percent)) + geom_bar(stat="identity")
                     
-                }else{
+                } else {
                     data_measles %>% filter(country==input$country) %>% group_by(agediff5) %>% 
                         count(measles,wt=perweight) %>% pivot_wider(values_from=n,names_from=measles) %>% 
                         mutate(percent=`Vaccinated`/(`Not vaccinated`+`Vaccinated`)*100) %>% 
@@ -77,7 +82,7 @@ server <- function(input, output, session) {
                         mutate(percent=`Underweight`/(`Normal weight`+`Underweight`)*100) %>% 
                         ggplot(aes(agediff5,percent)) + geom_bar(stat="identity")
                     
-                }else{
+                } else {
                     data_underweight %>% filter(country==input$country) %>% group_by(agediff5) %>% 
                         count(underweight,wt=perweight) %>% pivot_wider(values_from=n,names_from=underweight) %>% 
                         mutate(percent=`Underweight`/(`Normal weight`+`Underweight`)*100) %>% 
