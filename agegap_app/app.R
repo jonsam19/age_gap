@@ -52,14 +52,17 @@ server <- function(input, output, session) {
                         mutate(percent=`Received treatment`/(`No treatment`+`Received treatment`)*100) %>% 
                         ggplot(aes(agediff5,percent,fill=agediff5)) + geom_bar(stat="identity") +
                         theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
-                              panel.background = element_blank(), legend.title =element_blank()) +
+                              panel.background = element_blank(), legend.position = "none") +
                         ylab("% treated for fever") + xlab("Parental age difference")
                     
                 }else{
                     data_fevtreat %>% filter(country==input$country) %>% group_by(agediff5) %>% 
                         count(fevtreat,wt=perweight) %>% pivot_wider(values_from=n,names_from=fevtreat) %>% 
                         mutate(percent=`Received treatment`/(`No treatment`+`Received treatment`)*100) %>% 
-                        ggplot(aes(agediff5,percent)) + geom_bar(stat="identity")
+                        ggplot(aes(agediff5,percent,fill=agediff5)) + geom_bar(stat="identity") +
+                        theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+                              panel.background = element_blank(), legend.position = "none") +
+                        ylab("% treated for fever") + xlab("Parental age difference")
                 }
             }
             else if (input$health_outcome == "measles"){
@@ -67,26 +70,38 @@ server <- function(input, output, session) {
                     data_measles %>% group_by(agediff5) %>% 
                         count(measles,wt=perweight) %>% pivot_wider(values_from=n,names_from=measles) %>% 
                         mutate(percent=`Vaccinated`/(`Not vaccinated`+`Vaccinated`)*100) %>% 
-                        ggplot(aes(agediff5,percent)) + geom_bar(stat="identity")
+                        ggplot(aes(agediff5,percent,fill=agediff5)) + geom_bar(stat="identity") +
+                        theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+                              panel.background = element_blank(), legend.position = "none") +
+                        ylab("% vaccinated against measles") + xlab("Parental age difference")
                     
                 } else {
                     data_measles %>% filter(country==input$country) %>% group_by(agediff5) %>% 
                         count(measles,wt=perweight) %>% pivot_wider(values_from=n,names_from=measles) %>% 
                         mutate(percent=`Vaccinated`/(`Not vaccinated`+`Vaccinated`)*100) %>% 
-                        ggplot(aes(agediff5,percent)) + geom_bar(stat="identity")
+                        ggplot(aes(agediff5,percent,fill=agediff5)) + geom_bar(stat="identity") +
+                        theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+                              panel.background = element_blank(), legend.position = "none") +
+                        ylab("% vaccinated against measles") + xlab("Parental age difference")
                 }
             } else {
                 if(input$country=="All"){
                     data_underweight %>% group_by(agediff5) %>% 
                         count(underweight,wt=perweight) %>% pivot_wider(values_from=n,names_from=underweight) %>% 
                         mutate(percent=`Underweight`/(`Normal weight`+`Underweight`)*100) %>% 
-                        ggplot(aes(agediff5,percent)) + geom_bar(stat="identity")
+                        ggplot(aes(agediff5,percent,fill=agediff5)) + geom_bar(stat="identity") +
+                        theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+                              panel.background = element_blank(), legend.position = "none") +
+                        ylab("% underweight") + xlab("Parental age difference")
                     
                 } else {
                     data_underweight %>% filter(country==input$country) %>% group_by(agediff5) %>% 
                         count(underweight,wt=perweight) %>% pivot_wider(values_from=n,names_from=underweight) %>% 
                         mutate(percent=`Underweight`/(`Normal weight`+`Underweight`)*100) %>% 
-                        ggplot(aes(agediff5,percent)) + geom_bar(stat="identity")
+                        ggplot(aes(agediff5,percent,fill=agediff5)) + geom_bar(stat="identity") +
+                        theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+                              panel.background = element_blank(), legend.position = "none") +
+                        ylab("% underweight") + xlab("Parental age difference")
                 }
             
         }
