@@ -5,19 +5,16 @@ rm(list=ls())
 library(tidyverse)
 library(haven)
 library(plotly)
-library(lme4)
-library(sjstats)
 library(shiny)
 
 ## setting working directory   
-PATH="C:/R/age_gap/"
+# PATH="C:/R/age_gap/agegap_app"
+# 
+# setwd(PATH)
 
-setwd(PATH)
-
-source("agegap_app/prepare_data.R")
+source("prepare_data.R")
 
 countries = unique(data_fevtreat$country) %>% as.vector() %>% sort()
-
 
 ui <- fluidPage(
     

@@ -1,5 +1,5 @@
 
-data <- read_dta("data/thesis_data.dta") %>% 
+data <- haven::read_dta("thesis_data.dta") %>% 
   janitor::clean_names()
 
 # select variables & agediff
