@@ -2,7 +2,7 @@
 title: "Partner age gap and child health in Sub-Saharan Africa"
 author: "Jonas Samuelsson"
 output:
-  html_document:
+  rmdformats::readthedown:
 editor_options:
   chunk_output_type: console
 ---
