@@ -36,8 +36,8 @@ ui <- dashboardPage(
                                                            "Underweight"="underweight")),
                                  selectInput("country", "Select country",
                                              choices=c("All",countries)),width=3))),
-            tabItem(tabname="Models",
-                    fluidRow(box(h4("Models"))))
+            tabItem(tabname="Model results",
+                    fluidRow(box(h4("Model results"))))
         )
         
     ))
