@@ -5,10 +5,13 @@ rm(list=ls())
 
 ## load packages
 library(tidyverse)
+library(lme4)
+library(broom)
 library(haven)
 library(plotly)
 library(shiny)
 library(shinydashboard)
+library(dotwhisker)
 
 ## setting working directory   
 # PATH="C:/R/age_gap/agegap_app"

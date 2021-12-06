@@ -1,13 +1,3 @@
-library(lme4)
-library(tidyverse)
-library(haven)
-library(broom)
-
-PATH="C:/R/age_gap/agegap_app"
-setwd(PATH)
-
-source("prepare_data.R")
-
 data <- data %>% 
   mutate(agediff5=as_factor(agediff5) %>% relevel(ref="5-9"))
 data_fevtreat <- data_fevtreat %>% 
@@ -22,22 +12,28 @@ data_underweight <- data_underweight %>%
 fevtreat_model <- glmer(fevtreat~agediff5+
                           (1|respondent)+(1|country), data=data_fevtreat, nAGQ=0,
                         family=binomial(link="logit"), weights=perweight)
-# fevtreat_icc <- performance::icc(fevtreat_model,by_group=TRUE)
+fevtreat_icc <- performance::icc(fevtreat_model,by_group=TRUE) %>% as_tibble()
+saveRDS(fevtreat_model,file="models/fevtreat1.rds")
+write_csv(fevtreat_icc,file="models/fevtreat1_icc.csv")
 
 ## measles vaccination
 measles_model <- glmer(measles~agediff5+
                          (1|respondent)+(1|country), nAGQ=0, data=data_measles,
                        family=binomial(link="logit"), weights=perweight)
-# measles_icc <- performance::icc(measles_model,by_group=TRUE)
+measles_icc <- performance::icc(measles_model,by_group=TRUE)
+saveRDS(measles_model,file="models/measles1.rds")
+write_csv(measles_icc,file="models/measles1_icc.csv")
 
 ## underweight
 underweight_model <- glmer(underweight~agediff5+
                              (1|respondent)+(1|country), data=data_underweight, nAGQ=0,
                            family=binomial(link="logit"), weights=perweight)
-# underweight_icc <- performance::icc(underweight_model,by_group=TRUE)
+underweight_icc <- performance::icc(underweight_model,by_group=TRUE)
+saveRDS(underweight_model,file="models/underweight1.rds")
+write_csv(underweight_icc,file="models/underweight1_icc.csv")
 
 ## save as odds ratios
-or <- left_join(as_tibble(odds_ratios(fevtreat_model),rownames="term"),
+or1 <- left_join(as_tibble(odds_ratios(fevtreat_model),rownames="term"),
                 as_tibble(odds_ratios(measles_model),rownames="term"), 
                 by="term", suffix=c("fevtreat","measles")) %>% 
   left_join(as_tibble(odds_ratios(underweight_model),rownames="term") %>% 
@@ -61,24 +57,30 @@ or <- left_join(as_tibble(odds_ratios(fevtreat_model),rownames="term"),
 fevtreat_model <- glmer(fevtreat~agediff5+kidsex+kidcurage+kidbord+
                           (1|respondent)+(1|country), data=data_fevtreat, nAGQ=0,
                         family=binomial(link="logit"), weights=perweight)
-# fevtreat_icc <- performance::icc(fevtreat_model,by_group=TRUE)
+fevtreat_icc <- performance::icc(fevtreat_model,by_group=TRUE)
+saveRDS(fevtreat_model,file="models/fevtreat2.rds")
+write_csv(fevtreat_icc,file="models/fevtreat2_icc.csv")
 
 ## measeles vaccination
 measles_model <- glmer(measles~agediff5+kidsex+kidcurage+kidbord+
                          (1|respondent)+(1|country), nAGQ=0,
                        data=data_measles,
                        family=binomial(link="logit"), weights=perweight)
-# measles_icc <- performance::icc(measles_model,by_group=TRUE)
+measles_icc <- performance::icc(fevtreat_model,by_group=TRUE)
+saveRDS(measles_model,file="models/measles2.rds")
+write_csv(measles_icc,file="models/measles2_icc.csv")
 
 
 ## underweight
 underweight_model <- glmer(underweight~agediff5+kidsex+kidcurage+kidbord+
                              (1|respondent)+(1|country), data=data_underweight, nAGQ=0,
                            family=binomial(link="logit"), weights=perweight)
-# underweight_icc <- performance::icc(underweight_model,by_group=TRUE)
+underweight_icc <- performance::icc(underweight_model,by_group=TRUE)
+saveRDS(underweight_model,file="models/underweight2.rds")
+write_csv(underweight_icc,file="models/underweight2_icc.csv")
 
 ## save as odds ratios
-or <- left_join(as_tibble(odds_ratios(fevtreat_model),rownames="term"),
+or2 <- left_join(as_tibble(odds_ratios(fevtreat_model),rownames="term"),
                 as_tibble(odds_ratios(measles_model),rownames="term"), 
                 by="term", suffix=c("fevtreat","measles")) %>% 
   left_join(as_tibble(odds_ratios(underweight_model),rownames="term") %>% 
@@ -104,9 +106,9 @@ fevtreat_model <- glmer(fevtreat~agediff5+kidsex+kidcurage+kidbord+poly+
                           mage+educlvl+husedlvl+wealthq+urban+
                           (1|respondent)+(1|country), data=data_fevtreat, nAGQ=0,
                         family=binomial(link="logit"), weights=perweight)
-# fevtreat_icc <- performance::icc(fevtreat_model,by_group=TRUE)
-# fevtreat_res <- ggcoefstats(fevtreat_model,
-#             exclude.intercept=T,stats.labels=F)
+fevtreat_icc <- performance::icc(fevtreat_model,by_group=TRUE)
+saveRDS(fevtreat_model,file="models/fevtreat3.rds")
+write_csv(fevtreat_icc,file="models/fevtreat3_icc.csv")
 
 ## measeles vaccination
 measles_model <- glmer(measles~agediff5+kidsex+kidcurage+kidbord+poly+
@@ -114,21 +116,25 @@ measles_model <- glmer(measles~agediff5+kidsex+kidcurage+kidbord+poly+
                          (1|respondent)+(1|country), nAGQ=0,
                        data=data_measles,
                        family=binomial(link="logit"), weights=perweight)
-# measles_icc <- performance::icc(measles_model,by_group=TRUE)
-# measles_res <- ggcoefstats(measles_model,
-#             exclude.intercept=T,stats.labels=F)
+measles_icc <- performance::icc(measles_model,by_group=TRUE)
+saveRDS(measles_model,file="models/measles3.rds")
+write_csv(measles_icc,file="models/measles3_icc.csv")
 
 ## underweight
 underweight_model <- glmer(underweight~agediff5+kidsex+kidcurage+kidbord+poly+
                              mage+educlvl+husedlvl+wealthq+urban+
                              (1|respondent)+(1|country), data=data_underweight, nAGQ=0,
                            family=binomial(link="logit"), weights=perweight)
-# underweight_icc <- performance::icc(underweight_model,by_group=TRUE)
-# underweight_res <- ggcoefstats(underweight_model,
-#             exclude.intercept=T,stats.labels=F)
+underweight_icc <- performance::icc(underweight_model,by_group=TRUE)
+saveRDS(underweight_model,file="models/underweight3.rds")
+write_csv(underweight_icc,file="models/underweight3_icc.csv")
 
+underweight_model <- readRDS("models/underweight3.rds")
+dwplot(underweight_model)
+
+plot_summs(underweight_model)
 ## save as odds ratios
-or <- left_join(as_tibble(odds_ratios(fevtreat_model),rownames="term"),
+or3 <- left_join(as_tibble(odds_ratios(fevtreat_model),rownames="term"),
                 as_tibble(odds_ratios(measles_model),rownames="term"), 
                 by="term", suffix=c("fevtreat","measles")) %>% 
   left_join(as_tibble(odds_ratios(underweight_model),rownames="term") %>% 
