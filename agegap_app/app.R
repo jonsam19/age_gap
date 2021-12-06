@@ -1,11 +1,17 @@
+# rsconnect::deployApp()
+
 ##################### Settings ##################
 rm(list=ls())
 
 ## load packages
 library(tidyverse)
+library(lme4)
+library(broom)
 library(haven)
 library(plotly)
 library(shiny)
+library(shinydashboard)
+library(dotwhisker)
 
 ## setting working directory   
 # PATH="C:/R/age_gap/agegap_app"
@@ -16,29 +22,30 @@ source("prepare_data.R")
 
 countries = unique(data_fevtreat$country) %>% as.vector() %>% sort()
 
-ui <- fluidPage(
-    
-    navbarPage("Child health & parental age gap",
-               
-               tabPanel("Descriptive",
-                        
-                        sidebarPanel(h4("Percentage"),
-                                     radioButtons("health_outcome", "Select health outcome",
-                                                  choices=list("Fever treatment"="fevtreat",
-                                                               "Measles vaccination"="measles",
-                                                               "Underweight"="underweight")),
-                                     selectInput("country", "Select country",
-                                                 choices=c("All",countries))),
-                        mainPanel(plotlyOutput("descriptive_plot"))),
-               
-               tabPanel("Model results")
-               
-    )
-)
+ui <- dashboardPage(
+    dashboardHeader(title ="Child health"),
+
+    dashboardSidebar(
+        sidebarMenu(
+            menuItem("Descriptive", tabName="Descriptive"),
+            menuItem("Models", tabname="Models"))),
+    dashboardBody(
+        tabItems(
+            tabItem(tabName="Descriptive",
+                    fluidRow(box(plotlyOutput("descriptive_plot"),width=9),
+                             box(radioButtons("health_outcome", "Select health outcome",
+                                              choices=list("Fever treatment"="fevtreat",
+                                                           "Measles vaccination"="measles",
+                                                           "Underweight"="underweight")),
+                                 selectInput("country", "Select country",
+                                             choices=c("All",countries)),width=3))),
+            tabItem(tabname="Model results",
+                    fluidRow(box(h4("Model results"))))
+        )
+        
+    ))
 
 server <- function(input, output, session) {
-    
-    
     
     descriptive_plot <- reactive(
         
@@ -49,8 +56,11 @@ server <- function(input, output, session) {
                         mutate(percent=`Received treatment`/(`No treatment`+`Received treatment`)*100) %>% 
                         ggplot(aes(agediff5,percent,fill=agediff5)) + geom_bar(stat="identity") +
                         theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
-                              panel.background = element_blank(), legend.position = "none") +
-                        ylab("% treated for fever") + xlab("Parental age difference")
+                              panel.background = element_blank(), legend.position = "none",
+                              plot.title = element_text(size=13)) +
+                        ylab("% treated for fever") + xlab("Parental age difference") +
+                        ggtitle("Percentage of children under five who were given any treatment 
+                                if they had fever or cough in the last two weeks")
                     
                 }else{
                     data_fevtreat %>% filter(country==input$country) %>% group_by(agediff5) %>% 
@@ -59,7 +69,9 @@ server <- function(input, output, session) {
                         ggplot(aes(agediff5,percent,fill=agediff5)) + geom_bar(stat="identity") +
                         theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
                               panel.background = element_blank(), legend.position = "none") +
-                        ylab("% treated for fever") + xlab("Parental age difference")
+                        ylab("% treated for fever") + xlab("Parental age difference") +
+                        ggtitle("Percentage of children under five who were given any treatment 
+                                if they had fever or cough in the last two weeks")
                 }
             }
             else if (input$health_outcome == "measles"){
@@ -70,7 +82,9 @@ server <- function(input, output, session) {
                         ggplot(aes(agediff5,percent,fill=agediff5)) + geom_bar(stat="identity") +
                         theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
                               panel.background = element_blank(), legend.position = "none") +
-                        ylab("% vaccinated against measles") + xlab("Parental age difference")
+                        ylab("% vaccinated against measles") + xlab("Parental age difference") +
+                        ggtitle("Percentage of children between one and five 
+                                who have received the first round of measles vacciens")
                     
                 } else {
                     data_measles %>% filter(country==input$country) %>% group_by(agediff5) %>% 
@@ -79,7 +93,9 @@ server <- function(input, output, session) {
                         ggplot(aes(agediff5,percent,fill=agediff5)) + geom_bar(stat="identity") +
                         theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
                               panel.background = element_blank(), legend.position = "none") +
-                        ylab("% vaccinated against measles") + xlab("Parental age difference")
+                        ylab("% vaccinated against measles") + xlab("Parental age difference") +
+                        ggtitle("Percentage of children between one and five 
+                                who have received the first round of measles vacciens")
                 }
             } else {
                 if(input$country=="All"){
@@ -89,7 +105,8 @@ server <- function(input, output, session) {
                         ggplot(aes(agediff5,percent,fill=agediff5)) + geom_bar(stat="identity") +
                         theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
                               panel.background = element_blank(), legend.position = "none") +
-                        ylab("% underweight") + xlab("Parental age difference")
+                        ylab("% underweight") + xlab("Parental age difference") +
+                        ggtitle("Percentage of children under five who are underweight")
                     
                 } else {
                     data_underweight %>% filter(country==input$country) %>% group_by(agediff5) %>% 

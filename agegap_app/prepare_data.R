@@ -54,3 +54,31 @@ odds_ratios <-function(model){
                    LL = fixef(model) - 1.96 * sqrt(diag(vcov(model))), 
                    UL = fixef(model) + 1.96 * sqrt(diag(vcov(model)))))
 }
+
+################################### models ##################################
+fevtreat_model1 <- readRDS("models/fevtreat1.rds")
+fevtreat_icc1 <- read_csv("models/fevtreat1_icc.csv")
+
+measles_model1 <- readRDS("models/measles1.rds")
+measles_icc1 <- read_csv("models/measles1_icc.csv")
+
+underweight_model1 <- readRDS("models/underweight1.rds")
+underweight_icc1 <- read_csv("models/underweight1_icc.csv")
+
+fevtreat_model2 <- readRDS("models/fevtreat2.rds")
+fevtreat_icc2 <- read_csv("models/fevtreat2_icc.csv")
+
+measles_model2 <- readRDS("models/measles2.rds")
+measles_icc2 <- read_csv("models/measles2_icc.csv")
+
+underweight_model2 <- readRDS("models/underweight2.rds")
+underweight_icc2 <- read_csv("models/underweight2_icc.csv")
+
+fevtreat_model3 <- readRDS("models/fevtreat3.rds")
+fevtreat_icc3 <- read_csv("models/fevtreat3_icc.csv")
+
+measles_model3 <- readRDS("models/measles3.rds")
+measles_icc3 <- read_csv("models/measles3_icc.csv")
+
+underweight_model3 <- readRDS("models/underweight3.rds")
+underweight_icc3 <- read_csv("models/underweight3_icc.csv")
