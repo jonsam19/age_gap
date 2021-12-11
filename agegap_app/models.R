@@ -134,10 +134,10 @@ dwplot(underweight_model)
 
 plot_summs(underweight_model)
 ## save as odds ratios
-or3 <- left_join(as_tibble(odds_ratios(fevtreat_model),rownames="term"),
-                as_tibble(odds_ratios(measles_model),rownames="term"), 
+or3 <- left_join(as_tibble(odds_ratios(fevtreat_model3),rownames="term"),
+                as_tibble(odds_ratios(measles_model3),rownames="term"), 
                 by="term", suffix=c("fevtreat","measles")) %>% 
-  left_join(as_tibble(odds_ratios(underweight_model),rownames="term") %>% 
+  left_join(as_tibble(odds_ratios(underweight_model3),rownames="term") %>% 
               rename("Estunderweight"="Est", "LLunderweight"="LL",
                      "ULunderweight"="UL"), by="term") %>% 
   mutate_at(vars(-term), round,2) %>% 
@@ -152,3 +152,36 @@ or3 <- left_join(as_tibble(odds_ratios(fevtreat_model),rownames="term"),
 #   left_join(as_tibble(as_tibble(underweight_icc)) %>% 
 #               rename("ICC_underweight"="ICC"), by="Group") %>% 
 #   mutate_at(vars(-Group),round,3)
+
+underweight_model1 <- tidy(readRDS("models/underweight1.rds"),exponentiate=TRUE) %>% 
+  mutate(model="Agediff model") %>% 
+  filter(term =="agediff5<0" | term =="agediff50-4" | term =="agediff510-14" |
+           term =="agediff515+")
+
+underweight_model2 <- tidy(readRDS("models/underweight2.rds"),exponentiate=TRUE) %>% 
+  mutate(model = "Child model")
+underweight_model2_nocoef <- underweight_model2 %>% 
+  filter(term =="agediff5<0" | term =="agediff50-4" | term =="agediff510-14" |
+           term =="agediff515+")
+
+underweight_model3 <- tidy(readRDS("models/underweight3.rds"),exponentiate=TRUE) %>% 
+    mutate(model = "Full model")
+underweight_model3_nocoef <- underweight_model3 %>% 
+    filter(term =="agediff5<0" | term =="agediff50-4" | term =="agediff510-14" |
+             term =="agediff515+")
+
+underweight_models_nocoef <- rbind(underweight_model1,underweight_model2_nocoef,
+                                     underweight_model3_nocoef) %>% 
+  mutate(term=case_when(term=="agediff5<0"~"<0",
+                        term=="agediff50-4"~"0-4",
+                        term=="agediff510-14"~"10-14",
+                        term=="agediff515+"~"15+"))
+
+underweight_models <- rbind(underweight_model1,underweight_model2,underweight_model3) %>% 
+  filter(term!="sd__(Intercept)")
+  mutate(term=case_when(term=="agediff5<0"~"<0",
+                        term=="agediff50-4"~"0-4",
+                        term=="agediff510-14"~"10-14",
+                        term=="agediff515+"~"15+"))
+
+dotwhisker::dwplot(underweight_models_nocoef)

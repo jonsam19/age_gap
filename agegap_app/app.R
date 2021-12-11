@@ -7,6 +7,7 @@ rm(list=ls())
 library(tidyverse)
 library(lme4)
 library(broom)
+library(broom.mixed)
 library(haven)
 library(plotly)
 library(shiny)
@@ -15,7 +16,6 @@ library(dotwhisker)
 
 ## setting working directory   
 # PATH="C:/R/age_gap/agegap_app"
-# 
 # setwd(PATH)
 
 source("prepare_data.R")
