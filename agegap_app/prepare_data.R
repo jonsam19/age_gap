@@ -1,13 +1,13 @@
 
-data <- haven::read_dta("thesis_data.dta") %>% 
+data <- haven::read_dta("thesis_data.dta") |>
   janitor::clean_names()
 
 # select variables & agediff
-data <- data %>% select(country, year, wifenum, kidalive, perweight,
+data <- data |> select(country, year, wifenum, kidalive, perweight,
                         kidsex, kidbord, kidcurage, educlvl,
                         husedlvl, wealthq, urban, poly, fevtreat, measles, 
                         underweight, agediff5, agediff, respondent, mage,
-                        healthcardkid, vacev, worm, kidalive,lowbw) %>% 
+                        healthcardkid, vacev, worm, kidalive,lowbw) |> 
   mutate(underweight=as_factor(underweight),
          urban=as_factor(urban),
          country=as_factor(country),
@@ -26,23 +26,23 @@ data <- data %>% select(country, year, wifenum, kidalive, perweight,
          agediff5=factor(agediff5, levels=c("<0","0-4","5-9","10-14","15+")),
          kidcurage=as_factor(kidcurage),
          kidbord=as_factor(kidbord),
-         mage=as_factor(mage) %>% relevel(ref="25-29"),
+         mage=as_factor(mage) |> relevel(ref="25-29"),
          kidbord=as_factor(kidbord),
          healthcardkid=as_factor(healthcardkid),
          vacev=as_factor(vacev),
          worm=as_factor(worm),
          kidalive=as_factor(kidalive),
-         lowbw=as_factor(lowbw)) %>% 
+         lowbw=as_factor(lowbw)) |> 
   zap_labels()
 
-data_fevtreat <- data %>% filter(!is.na(fevtreat) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &
+data_fevtreat <- data |> filter(!is.na(fevtreat) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &
                                    !is.na(kidbord) & !is.na(poly) & !is.na(mage) & !is.na(educlvl) &
                                    !is.na(husedlvl) & !is.na(wealthq) & !is.na(urban) & !is.na(kidcurage))
-data_measles <- data %>% filter(!is.na(measles) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &
+data_measles <- data |> filter(!is.na(measles) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &
                                   !is.na(kidbord) & !is.na(poly) & !is.na(mage) & !is.na(educlvl) &
                                   !is.na(husedlvl) & !is.na(wealthq) & !is.na(urban) & !is.na(kidcurage) &
                                   kidcurage!="less than 1 year")
-data_underweight <- data %>% filter(!is.na(underweight) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &
+data_underweight <- data |> filter(!is.na(underweight) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &
                                       !is.na(kidbord) & !is.na(poly) & !is.na(mage) & !is.na(educlvl) &
                                       !is.na(husedlvl) & !is.na(wealthq) & !is.na(urban) & !is.na(kidcurage))
 
