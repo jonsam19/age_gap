@@ -12,7 +12,7 @@ library(haven)
 library(plotly)
 library(shiny)
 library(shinydashboard)
-library(dotwhisker)
+library(sjPlot)
 
 ## setting working directory   
 # PATH="C:/R/age_gap/agegap_app"
@@ -28,7 +28,8 @@ ui <- dashboardPage(
     dashboardSidebar(
         sidebarMenu(
             menuItem("Descriptive", tabName="Descriptive"),
-            menuItem("Models", tabname="Models"))),
+            menuItem("Models", tabName="Models"))),
+    
     dashboardBody(
         tabItems(
             tabItem(tabName="Descriptive",
@@ -39,8 +40,14 @@ ui <- dashboardPage(
                                                            "Underweight"="underweight")),
                                  selectInput("country", "Select country",
                                              choices=c("All",countries)),width=3))),
-            tabItem(tabname="Model results",
-                    fluidRow(box(h4("Model results"))))
+            tabItem(tabName="Models",
+                    fluidRow(box(plotlyOutput("model_plot"),width=9),
+                             box(radioButtons("health_outcome2", "Select health outcome",
+                                              choices=list("Fever treatment"="fevtreat",
+                                                           "Measles vaccination"="measles",
+                                                           "Underweight"="underweight")),
+                                 radioButtons("coefficients","Show coefficients",
+                                              choices=list("Yes"="yes","No"="no")))))
         )
         
     ))
@@ -122,7 +129,58 @@ server <- function(input, output, session) {
         
     )
     
+    model_plot <- reactive(
+      
+      if (input$health_outcome2 == "fevtreat" & input$coefficients=="yes") {
+        fevtreat_model2 |> plot_model()
+        # rbind(fevtreat_model1,fevtreat_model2,fevtreat_model3) |> 
+        #   filter(term!="sd__(Intercept)") |> 
+        #   mutate(term=case_when(term=="agediff5<0"~"<0",
+        #                         term=="agediff50-4"~"0-4",
+        #                         term=="agediff510-14"~"10-14",
+        #                         term=="agediff515+"~"15+",
+        #                         term=="kidsexfemale"~"Female",
+        #                         term=="kidcurage1 year"~"1 year",
+        #                         term=="kidcurage2 years"~"2 years",
+        #                         term=="kidcurage3 years"~"3 years",
+        #                         term=="kidcurage4 years"~"4 years",
+        #                         term=="kidbord2nd"~"2nd",
+        #                         term=="kidbord3rd"~"3rd",
+        #                         term=="kidbord4th"~"4th",
+        #                         term=="kidbord5th"~"5th",
+        #                         term=="kidbord6th or >"~"6th or >",
+        #                         term=="polyOther wives"~"Polygynous",
+        #                         term=="mage15-19"~"15-19",
+        #                         term=="mage20-24"~"20-24",
+        #                         term=="mage30-34"~"30-34",
+        #                         term=="mage35-39"~"35-39",
+        #                         term=="mage40+"~"40+",
+        #                         term=="educlvlprimary"~"Primary",
+        #                         term=="educlvlsecondary"~"Secondary",
+        #                         term=="educlvlHigher"~"Higher",
+        #                         term=="husedlvlprimary"~"Primary",
+        #                         term=="husedlvlsecondary"~"Secondary",
+        #                         term=="husedlvlHigher"~"Higher",
+        #                         term=="wealthqpoorer"~"Poorer",
+        #                         term=="wealthqmiddle"~"Middle",
+        #                         term=="wealthqricher"~"Richer",
+        #                         term=="wealthqrichest"~"Richest",
+        #                         term=="urbanUrban"~"Urban",
+        #                         TRUE~term)) |> 
+        #   dwplot(group=1,
+        #     vline = geom_vline(
+        #            xintercept = 1,
+        #            colour = "grey60",
+        #            linetype = 2)) +
+        #   theme_bw() 
+      } else if (input$health_outcome2 == "fevtreat" & input$coefficients=="no") {
+        fevtreat_model1 |> plot_model()
+      }
+    )
+    
+## outputs
     output$descriptive_plot <- renderPlotly(ggplotly(descriptive_plot()))
+    output$model_plot <- renderPlotly(ggplotly(model_plot()))
 }
 
 # Run the application 

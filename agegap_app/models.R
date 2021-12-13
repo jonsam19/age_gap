@@ -7,24 +7,6 @@ data_measles <- data_measles |>
 data_underweight <- data_underweight |> 
   mutate(agediff5=as_factor(agediff5) |> relevel(ref="5-9"))
 
-data_fevtreat <- data_fevtreat %>%
-  group_by(respondent) %>%
-  mutate(weight_mult = n() / sum(perweight)) %>%
-  ungroup() %>%
-  mutate(swt = perweight * weight_mult)
-
-data_measles <- data_fevtreat %>%
-  group_by(respondent) %>%
-  mutate(weight_mult = n() / sum(perweight)) %>%
-  ungroup() %>%
-  mutate(swt = perweight * weight_mult)
-
-data_underweight <- data_fevtreat %>%
-  group_by(respondent) %>%
-  mutate(weight_mult = n() / sum(perweight)) %>%
-  ungroup() %>%
-  mutate(swt = perweight * weight_mult)
-
 ##################### only age gap models #########################
 ## fever treatment
 fevtreat_model <- glmer(fevtreat~agediff5+
@@ -88,7 +70,6 @@ measles_icc <- performance::icc(fevtreat_model,by_group=TRUE)
 saveRDS(measles_model,file="models/measles2.rds")
 write_csv(measles_icc,file="models/measles2_icc.csv")
 
-
 ## underweight
 underweight_model <- glmer(underweight~agediff5+kidsex+kidcurage+kidbord+
                              (1|respondent)+(1|country), data=data_underweight, nAGQ=0,
@@ -147,10 +128,6 @@ underweight_icc <- performance::icc(underweight_model,by_group=TRUE)
 saveRDS(underweight_model,file="models/underweight3.rds")
 write_csv(underweight_icc,file="models/underweight3_icc.csv")
 
-underweight_model <- readRDS("models/underweight3.rds")
-dwplot(underweight_model)
-
-plot_summs(underweight_model)
 ## save as odds ratios
 or3 <- left_join(as_tibble(odds_ratios(fevtreat_model3),rownames="term"),
                 as_tibble(odds_ratios(measles_model3),rownames="term"), 
@@ -172,9 +149,7 @@ or3 <- left_join(as_tibble(odds_ratios(fevtreat_model3),rownames="term"),
 #   mutate_at(vars(-Group),round,3)
 
 underweight_model1 <- tidy(readRDS("models/underweight1.rds"),exponentiate=TRUE) |> 
-  mutate(model="Agediff model") |> 
-  filter(term =="agediff5<0" | term =="agediff50-4" | term =="agediff510-14" |
-           term =="agediff515+")
+  mutate(model="Agediff model")
 
 underweight_model2 <- tidy(readRDS("models/underweight2.rds"),exponentiate=TRUE) |> 
   mutate(model = "Child model")

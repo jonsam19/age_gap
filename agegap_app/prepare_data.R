@@ -35,27 +35,7 @@ data <- data |> select(country, year, wifenum, kidalive, perweight,
          lowbw=as_factor(lowbw)) |> 
   zap_labels()
 
-data_fevtreat <- data |> filter(!is.na(fevtreat) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &
-                                   !is.na(kidbord) & !is.na(poly) & !is.na(mage) & !is.na(educlvl) &
-                                   !is.na(husedlvl) & !is.na(wealthq) & !is.na(urban) & !is.na(kidcurage))
-data_measles <- data |> filter(!is.na(measles) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &
-                                  !is.na(kidbord) & !is.na(poly) & !is.na(mage) & !is.na(educlvl) &
-                                  !is.na(husedlvl) & !is.na(wealthq) & !is.na(urban) & !is.na(kidcurage) &
-                                  kidcurage!="less than 1 year")
-data_underweight <- data |> filter(!is.na(underweight) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &
-                                      !is.na(kidbord) & !is.na(poly) & !is.na(mage) & !is.na(educlvl) &
-                                      !is.na(husedlvl) & !is.na(wealthq) & !is.na(urban) & !is.na(kidcurage))
-
-
-
-################################### functions #################################
-odds_ratios <-function(model){
-  exp(tab <- cbind(Est = fixef(model), 
-                   LL = fixef(model) - 1.96 * sqrt(diag(vcov(model))), 
-                   UL = fixef(model) + 1.96 * sqrt(diag(vcov(model)))))
-}
-
-################################### models ##################################
+## load models
 fevtreat_model1 <- readRDS("models/fevtreat1.rds")
 fevtreat_icc1 <- read_csv("models/fevtreat1_icc.csv")
 
@@ -82,3 +62,49 @@ measles_icc3 <- read_csv("models/measles3_icc.csv")
 
 underweight_model3 <- readRDS("models/underweight3.rds")
 underweight_icc3 <- read_csv("models/underweight3_icc.csv")
+
+## filter variables
+data_fevtreat <- data |> filter(!is.na(fevtreat) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &
+                                   !is.na(kidbord) & !is.na(poly) & !is.na(mage) & !is.na(educlvl) &
+                                   !is.na(husedlvl) & !is.na(wealthq) & !is.na(urban) & !is.na(kidcurage))
+data_measles <- data |> filter(!is.na(measles) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &
+                                  !is.na(kidbord) & !is.na(poly) & !is.na(mage) & !is.na(educlvl) &
+                                  !is.na(husedlvl) & !is.na(wealthq) & !is.na(urban) & !is.na(kidcurage) &
+                                  kidcurage!="less than 1 year")
+data_underweight <- data |> filter(!is.na(underweight) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &
+                                      !is.na(kidbord) & !is.na(poly) & !is.na(mage) & !is.na(educlvl) &
+                                      !is.na(husedlvl) & !is.na(wealthq) & !is.na(urban) & !is.na(kidcurage))
+
+## reweight
+data <- data %>%
+  group_by(respondent) %>%
+  mutate(weight_mult = n() / sum(perweight)) %>%
+  ungroup() %>%
+  mutate(swt = perweight * weight_mult)
+
+data_fevtreat <- data_fevtreat %>%
+  group_by(respondent) %>%
+  mutate(weight_mult = n() / sum(perweight)) %>%
+  ungroup() %>%
+  mutate(swt = perweight * weight_mult)
+
+data_measles <- data_fevtreat %>%
+  group_by(respondent) %>%
+  mutate(weight_mult = n() / sum(perweight)) %>%
+  ungroup() %>%
+  mutate(swt = perweight * weight_mult)
+
+data_underweight <- data_fevtreat %>%
+  group_by(respondent) %>%
+  mutate(weight_mult = n() / sum(perweight)) %>%
+  ungroup() %>%
+  mutate(swt = perweight * weight_mult)
+
+
+
+################################### functions #################################
+odds_ratios <-function(model){
+  exp(tab <- cbind(Est = fixef(model), 
+                   LL = fixef(model) - 1.96 * sqrt(diag(vcov(model))), 
+                   UL = fixef(model) + 1.96 * sqrt(diag(vcov(model)))))
+}
