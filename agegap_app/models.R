@@ -148,63 +148,19 @@ or3 <- left_join(as_tibble(odds_ratios(fevtreat_model3),rownames="term"),
 #               rename("ICC_underweight"="ICC"), by="Group") |> 
 #   mutate_at(vars(-Group),round,3)
 
-underweight_model1 <- tidy(readRDS("models/underweight1.rds"),exponentiate=TRUE) |> 
-  mutate(model="Agediff model")
+############################### create plots ################################
+readRDS("models/fevtreat1.rds") |> 
+  plot_model(show.values=TRUE,title="Fever treatment",value.size=3) |> 
+  ggplotly() %>% plotly_build() |> saveRDS("plots/fevtreat_plot1.rds")
+measles_plot1 <- readRDS("models/measles1.rds")
+underweight_plot1 <- readRDS("models/underweight1.rds")
 
-underweight_model2 <- tidy(readRDS("models/underweight2.rds"),exponentiate=TRUE) |> 
-  mutate(model = "Child model")
+readRDS("models/fevtreat2.rds") |> 
+  plot_model(show.values=TRUE,title="Fever treatment",value.size=3) |> 
+  ggplotly() %>% plotly_build() |> saveRDS("plots/fevtreat_plot2.rds")
+measles_plot2 <- readRDS("models/measles2.rds")
+underweight_plot2 <- readRDS("models/underweight2.rds")
 
-underweight_model3 <- tidy(readRDS("models/underweight3.rds"),exponentiate=TRUE) |> 
-    mutate(model = "Full model")
-
-underweight_models <- rbind(underweight_model1,underweight_model2,underweight_model3) |> 
-  filter(term!="sd__(Intercept)") |> 
-  mutate(term=case_when(term=="agediff5<0"~"<0",
-                        term=="agediff50-4"~"0-4",
-                        term=="agediff510-14"~"10-14",
-                        term=="agediff515+"~"15+",
-                        term=="kidsexfemale"~"Female",
-                        term=="kidcurage1 year"~"1 year",
-                        term=="kidcurage2 years"~"2 years",
-                        term=="kidcurage3 years"~"3 years",
-                        term=="kidcurage4 years"~"4 years",
-                        term=="kidbord2nd"~"2nd",
-                        term=="kidbord3rd"~"3rd",
-                        term=="kidbord4th"~"4th",
-                        term=="kidbord5th"~"5th",
-                        term=="kidbord6th or >"~"6th or >",
-                        term=="polyOther wives"~"Polygynous",
-                        term=="mage15-19"~"15-19",
-                        term=="mage20-24"~"20-24",
-                        term=="mage30-34"~"30-34",
-                        term=="mage35-39"~"35-39",
-                        term=="mage40+"~"40+",
-                        term=="educlvlprimary"~"Primary",
-                        term=="educlvlsecondary"~"Secondary",
-                        term=="educlvlHigher"~"Higher",
-                        term=="husedlvlprimary"~"Primary",
-                        term=="husedlvlsecondary"~"Secondary",
-                        term=="husedlvlHigher"~"Higher",
-                        term=="wealthqpoorer"~"Poorer",
-                        term=="wealthqmiddle"~"Middle",
-                        term=="wealthqricher"~"Richer",
-                        term=="wealthqrichest"~"Richest",
-                        term=="urbanUrban"~"Urban",
-                        TRUE~term))
-
-underweight_models_nocoef <- underweight_models |> 
-  filter(term=="<0" | term=="0-4" | term=="10-14" | term=="15+")
-
-dotwhisker::dwplot(underweight_models,
-                   vline = geom_vline(
-                     xintercept = 1,
-                     colour = "grey60",
-                     linetype = 2
-                   ))
-
-dotwhisker::dwplot(underweight_models_nocoef,
-                   vline = geom_vline(
-                     xintercept = 1,
-                     colour = "grey60",
-                     linetype = 2
-                   ))
+fevtreat_plot3 <- readRDS("models/fevtreat3.rds")
+measles_plot3 <- readRDS("models/measles3.rds")
+underweight_plot3 <- readRDS("models/underweight3.rds")
