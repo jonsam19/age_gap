@@ -66,6 +66,7 @@ underweight_icc3 <- read_csv("models/underweight3_icc.csv")
 ## load plots
 fevtreat_plot1 <- readRDS("plots/fevtreat_plot1.rds")
 fevtreat_plot2 <- readRDS("plots/fevtreat_plot2.rds")
+fevtreat_plot3 <- readRDS("plots/fevtreat_plot3.rds")
 
 ## filter variables
 data_fevtreat <- data |> filter(!is.na(fevtreat) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &

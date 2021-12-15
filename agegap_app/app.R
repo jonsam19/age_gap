@@ -41,13 +41,15 @@ ui <- dashboardPage(
                                  selectInput("country", "Select country",
                                              choices=c("All",countries)),width=3))),
             tabItem(tabName="Models",
-                    fluidRow(box(plotlyOutput("model_plot"),width=9),
+                    fluidRow(box(plotlyOutput("model_plot"),width=9,height=550),
                              box(radioButtons("health_outcome2", "Select health outcome",
                                               choices=list("Fever treatment"="fevtreat",
                                                            "Measles vaccination"="measles",
                                                            "Underweight"="underweight")),
-                                 radioButtons("coefficients","Show coefficients",
-                                              choices=list("Yes"="yes","No"="no")))))
+                                 radioButtons("coefficients","Select model",
+                                              choices=list("Only age gap"="agediff",
+                                                           "Child coefficients"="child",
+                                                           "Full model"="full")),width=3)))
         )
         
     ))
@@ -131,11 +133,13 @@ server <- function(input, output, session) {
     
     model_plot <- reactive(
       
-      if (input$health_outcome2 == "fevtreat" & input$coefficients=="yes") {
-        fevtreat_plot2
+      if (input$health_outcome2 == "fevtreat" & input$coefficients=="agediff") {
+        fevtreat_plot1 |> layout(height=500)
         
-      } else if (input$health_outcome2 == "fevtreat" & input$coefficients=="no") {
-        fevtreat_plot1
+      } else if (input$health_outcome2 == "fevtreat" & input$coefficients=="child") {
+        fevtreat_plot2 |> layout(height=500)
+      } else {
+        fevtreat_plot3 |> layout(height=500)
       }
     )
     

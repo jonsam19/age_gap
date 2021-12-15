@@ -149,18 +149,39 @@ or3 <- left_join(as_tibble(odds_ratios(fevtreat_model3),rownames="term"),
 #   mutate_at(vars(-Group),round,3)
 
 ############################### create plots ################################
-readRDS("models/fevtreat1.rds") |> 
-  plot_model(show.values=TRUE,title="Fever treatment",value.size=3) |> 
-  ggplotly() %>% plotly_build() |> saveRDS("plots/fevtreat_plot1.rds")
-measles_plot1 <- readRDS("models/measles1.rds")
-underweight_plot1 <- readRDS("models/underweight1.rds")
+ggplotly(readRDS("models/fevtreat1.rds") |> 
+           plot_model(title="Fever treatment",vline.color="black",axis.lim=c(0.99, 1.01),
+                      group.terms=c(1,1,1,1)) +
+           set_theme(base = theme_light()) + theme(legend.position="none")) |> 
+  plotly_build() |> saveRDS("plots/fevtreat_plot1.rds")
+readRDS("models/measles1.rds") |> 
+  plot_model(title="Measles") |> 
+  ggplotly() %>% plotly_build() |> saveRDS("plots/measles_plot1.rds")
+readRDS("models/underweight1.rds") |> 
+  plot_model(title="Underweight") |> 
+  ggplotly() %>% plotly_build() |> saveRDS("plots/underweight_plot1.rds") 
 
-readRDS("models/fevtreat2.rds") |> 
-  plot_model(show.values=TRUE,title="Fever treatment",value.size=3) |> 
-  ggplotly() %>% plotly_build() |> saveRDS("plots/fevtreat_plot2.rds")
-measles_plot2 <- readRDS("models/measles2.rds")
-underweight_plot2 <- readRDS("models/underweight2.rds")
+ggplotly(readRDS("models/fevtreat2.rds") |> 
+           plot_model(title="Fever treatment",vline.color="black",axis.lim=c(0.99, 1.01),
+                      group.terms=c(1,1,1,1,2,3,3,3,3,4,4,4,4,4)) +
+           set_theme(base = theme_light()) + theme(legend.position="none")) |> 
+  plotly_build() |> saveRDS("plots/fevtreat_plot2.rds")
+readRDS("models/measles2.rds") |> 
+  plot_model(title="Measles") |> 
+  ggplotly() %>% plotly_build() |> saveRDS("plots/measles_plot2.rds")
+readRDS("models/underweight2.rds") |> 
+  plot_model(title="Underweight") |> 
+  ggplotly() %>% plotly_build() |> saveRDS("plots/underweight_plot2.rds")
 
-fevtreat_plot3 <- readRDS("models/fevtreat3.rds")
-measles_plot3 <- readRDS("models/measles3.rds")
-underweight_plot3 <- readRDS("models/underweight3.rds")
+ggplotly(readRDS("models/fevtreat3.rds") |> 
+  plot_model(title="Fever treatment",vline.color="black",axis.lim=c(0.99, 1.01),
+             group.terms=c(1,1,1,1,2,3,3,3,3,4,4,4,4,4,
+                           5,6,6,6,6,6,7,7,7,8,8,8,9,9,9,9,10)) +
+    set_theme(base = theme_light()) + theme(legend.position="none")) |> 
+  plotly_build() |> saveRDS("plots/fevtreat_plot3.rds")
+readRDS("models/measles3.rds") |> 
+  plot_model(title="Measles") |> 
+  ggplotly() %>% plotly_build() |> saveRDS("plots/measles_plot3.rds")
+readRDS("models/underweight3.rds") |> 
+  plot_model(title="Underweight") |> 
+  ggplotly() %>% plotly_build() |> saveRDS("plots/underweight_plot3.rds")
