@@ -27,29 +27,30 @@ ui <- dashboardPage(
 
     dashboardSidebar(
         sidebarMenu(
-            menuItem("Descriptive", tabName="Descriptive"),
-            menuItem("Models", tabName="Models"))),
+          menuItem("Descriptive", tabName="Descriptive"),
+          menuItem("Model results",
+                   menuSubItem("Plot",tabName="plot_results"),
+                   menuSubItem("Table",tabName="table_results")),
+          menuItem(radioButtons("health_outcome", "Select health outcome",
+                                choices=list("Fever treatment"="fevtreat",
+                                             "Measles vaccination"="measles",
+                                             "Underweight"="underweight")))
+            )),
     
     dashboardBody(
         tabItems(
             tabItem(tabName="Descriptive",
                     fluidRow(box(plotlyOutput("descriptive_plot"),width=9),
-                             box(radioButtons("health_outcome", "Select health outcome",
-                                              choices=list("Fever treatment"="fevtreat",
-                                                           "Measles vaccination"="measles",
-                                                           "Underweight"="underweight")),
-                                 selectInput("country", "Select country",
+                             box(selectInput("country", "Select country",
                                              choices=c("All",countries)),width=3))),
-            tabItem(tabName="Models",
+            tabItem(tabName="plot_results",
                     fluidRow(box(plotlyOutput("model_plot"),width=9,height=550),
-                             box(radioButtons("health_outcome2", "Select health outcome",
-                                              choices=list("Fever treatment"="fevtreat",
-                                                           "Measles vaccination"="measles",
-                                                           "Underweight"="underweight")),
-                                 radioButtons("coefficients","Select model",
+                             box(radioButtons("coefficients_plot","Select model",
                                               choices=list("Only age gap"="agediff",
                                                            "Child coefficients"="child",
-                                                           "Full model"="full")),width=3)))
+                                                           "Full model"="full")),width=3))),
+            tabItem(tabName="table_results",
+                    fluidRow(box(tableOutput("model_table"),height=1550,width=11)))
         )
         
     ))
@@ -133,19 +134,44 @@ server <- function(input, output, session) {
     
     model_plot <- reactive(
       
-      if (input$health_outcome2 == "fevtreat" & input$coefficients=="agediff") {
+      if (input$health_outcome=="fevtreat" & input$coefficients_plot=="agediff") {
         fevtreat_plot1 |> layout(height=500)
-        
-      } else if (input$health_outcome2 == "fevtreat" & input$coefficients=="child") {
+      } else if (input$health_outcome=="fevtreat" & input$coefficients_plot=="child") {
         fevtreat_plot2 |> layout(height=500)
-      } else {
+      } else if (input$health_outcome=="fevtreat" & input$coefficients_plot=="full") {
         fevtreat_plot3 |> layout(height=500)
+        } else if (input$health_outcome=="measles" & input$coefficients_plot=="agediff") {
+          measles_plot1 |> layout(height=500)
+        } else if (input$health_outcome=="measles" & input$coefficients_plot=="child") {
+          measles_plot2 |> layout(height=500)
+        } else if (input$health_outcome=="measles" & input$coefficients_plot=="full") {
+          measles_plot3 |> layout(height=500)
+        } else if (input$health_outcome=="underweight" & input$coefficients_plot=="agediff") {
+          underweight_plot1 |> layout(height=500)
+        } else if (input$health_outcome=="underweight" & input$coefficients_plot=="child") {
+          underweight_plot2 |> layout(height=500)
+        } else if (input$health_outcome=="underweight" & input$coefficients_plot=="full") {
+          underweight_plot3 |> layout(height=500)
+        }
+    )
+    
+    model_table <- reactive(
+      
+      if (input$health_outcome=="fevtreat") {
+        HTML(fevtreat_table$knitr)
+      
+      } else if (input$health_outcome=="measles") {
+        HTML(measles_table$knitr)
+      
+      } else if (input$health_outcome=="underweight") {
+        HTML(underweight_table$knitr)
       }
     )
     
 ## outputs
     output$descriptive_plot <- renderPlotly(ggplotly(descriptive_plot()))
     output$model_plot <- renderPlotly((model_plot()))
+    output$model_table <- renderUI((model_table()))
 }
 
 # Run the application 

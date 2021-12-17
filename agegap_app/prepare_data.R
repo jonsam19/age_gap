@@ -37,36 +37,47 @@ data <- data |> select(country, year, wifenum, kidalive, perweight,
 
 ## load models
 fevtreat_model1 <- readRDS("models/fevtreat1.rds")
-fevtreat_icc1 <- read_csv("models/fevtreat1_icc.csv")
+# fevtreat_icc1 <- read_csv("models/fevtreat1_icc.csv")
 
 measles_model1 <- readRDS("models/measles1.rds")
-measles_icc1 <- read_csv("models/measles1_icc.csv")
+# measles_icc1 <- read_csv("models/measles1_icc.csv")
 
 underweight_model1 <- readRDS("models/underweight1.rds")
-underweight_icc1 <- read_csv("models/underweight1_icc.csv")
+# underweight_icc1 <- read_csv("models/underweight1_icc.csv")
 
 fevtreat_model2 <- readRDS("models/fevtreat2.rds")
-fevtreat_icc2 <- read_csv("models/fevtreat2_icc.csv")
+# fevtreat_icc2 <- read_csv("models/fevtreat2_icc.csv")
 
 measles_model2 <- readRDS("models/measles2.rds")
-measles_icc2 <- read_csv("models/measles2_icc.csv")
+# measles_icc2 <- read_csv("models/measles2_icc.csv")
 
 underweight_model2 <- readRDS("models/underweight2.rds")
-underweight_icc2 <- read_csv("models/underweight2_icc.csv")
+# underweight_icc2 <- read_csv("models/underweight2_icc.csv")
 
 fevtreat_model3 <- readRDS("models/fevtreat3.rds")
-fevtreat_icc3 <- read_csv("models/fevtreat3_icc.csv")
+# fevtreat_icc3 <- read_csv("models/fevtreat3_icc.csv")
 
 measles_model3 <- readRDS("models/measles3.rds")
-measles_icc3 <- read_csv("models/measles3_icc.csv")
+# measles_icc3 <- read_csv("models/measles3_icc.csv")
 
 underweight_model3 <- readRDS("models/underweight3.rds")
-underweight_icc3 <- read_csv("models/underweight3_icc.csv")
+# underweight_icc3 <- read_csv("models/underweight3_icc.csv")
 
 ## load plots
 fevtreat_plot1 <- readRDS("plots/fevtreat_plot1.rds")
 fevtreat_plot2 <- readRDS("plots/fevtreat_plot2.rds")
 fevtreat_plot3 <- readRDS("plots/fevtreat_plot3.rds")
+measles_plot1 <- readRDS("plots/measles_plot1.rds")
+measles_plot2 <- readRDS("plots/measles_plot2.rds")
+measles_plot3 <- readRDS("plots/measles_plot3.rds")
+underweight_plot1 <- readRDS("plots/underweight_plot1.rds")
+underweight_plot2 <- readRDS("plots/underweight_plot2.rds")
+underweight_plot3 <- readRDS("plots/underweight_plot3.rds")
+
+## load tables
+fevtreat_table <- readRDS("plots/fevtreat_table.rds")
+measles_table <- readRDS("plots/measles_table.rds")
+underweight_table <- readRDS("plots/underweight_table.rds")
 
 ## filter variables
 data_fevtreat <- data |> filter(!is.na(fevtreat) & !is.na(agediff5) & !is.na(kidsex) & !is.na(kidcurage) &
@@ -93,13 +104,13 @@ data_fevtreat <- data_fevtreat %>%
   ungroup() %>%
   mutate(swt = perweight * weight_mult)
 
-data_measles <- data_fevtreat %>%
+data_measles <- data_measles %>%
   group_by(respondent) %>%
   mutate(weight_mult = n() / sum(perweight)) %>%
   ungroup() %>%
   mutate(swt = perweight * weight_mult)
 
-data_underweight <- data_fevtreat %>%
+data_underweight <- data_underweight %>%
   group_by(respondent) %>%
   mutate(weight_mult = n() / sum(perweight)) %>%
   ungroup() %>%
