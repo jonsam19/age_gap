@@ -177,12 +177,12 @@ ggplotly(readRDS("models/fevtreat1.rds") |>
            set_theme(base = theme_light()) + theme(legend.position="none")) |> 
   plotly_build() |> saveRDS("plots/fevtreat_plot1.rds")
 ggplotly(readRDS("models/measles1.rds") |> 
-           plot_model(title="Measles",vline.color="black",axis.lim=c(0.99, 1.01),
+           plot_model(title="Measles vaccination",vline.color="black",axis.lim=c(0.99, 1.01),
                       group.terms=c(1,1,1,1)) +
            set_theme(base = theme_light()) + theme(legend.position="none")) |> 
   plotly_build() |> saveRDS("plots/measles_plot1.rds")
 ggplotly(readRDS("models/underweight1.rds") |> 
-           plot_model(title="Measles",vline.color="black",axis.lim=c(0.99, 1.01),
+           plot_model(title="Underweight",vline.color="black",axis.lim=c(0.99, 1.01),
                       group.terms=c(1,1,1,1)) +
            set_theme(base = theme_light()) + theme(legend.position="none")) |> 
   plotly_build() |> saveRDS("plots/underweight_plot1.rds")
@@ -195,7 +195,7 @@ ggplotly(readRDS("models/fevtreat2.rds") |>
            set_theme(base = theme_light()) + theme(legend.position="none")) |> 
   plotly_build() |> saveRDS("plots/fevtreat_plot2.rds")
 ggplotly(readRDS("models/measles2.rds") |> 
-           plot_model(title="Measles",vline.color="black",axis.lim=c(0.99, 1.01),
+           plot_model(title="Measles vaccination",vline.color="black",axis.lim=c(0.99, 1.01),
                       group.terms=c(1,1,1,1,2,3,3,3,4,4,4,4,4)) +
            set_theme(base = theme_light()) + theme(legend.position="none")) |> 
   plotly_build() |> saveRDS("plots/measles_plot2.rds")
@@ -214,7 +214,7 @@ ggplotly(readRDS("models/fevtreat3.rds") |>
     set_theme(base = theme_light()) + theme(legend.position="none")) |> 
   plotly_build() |> saveRDS("plots/fevtreat_plot3.rds")
 ggplotly(readRDS("models/measles3.rds") |> 
-           plot_model(title="Measles",vline.color="black",axis.lim=c(0.99, 1.01),
+           plot_model(title="Measles vaccination",vline.color="black",axis.lim=c(0.99, 1.01),
                       group.terms=c(1,1,1,1,2,3,3,3,4,4,4,4,4,
                                     5,6,6,6,6,6,7,7,7,8,8,8,9,9,9,9,10)) +
            set_theme(base = theme_light()) + theme(legend.position="none")) |> 
@@ -232,14 +232,14 @@ ggplotly(readRDS("models/underweight3.rds") |>
 tab_model(fevtreat_model1,fevtreat_model2,fevtreat_model3,show.obs=TRUE,
           dv.labels = c("Model 1: age gap","Model 2: children","Model 3: parents"),
           pred.labels=c("Intercept","Age gap: <0","Age gap: 0-4","Age gap: 10-14","Age gap: 15+",
-                        "Sex: female","Child age: 1 year","Child age: 2 years",
-                        "Child age: 3 years","Child age: 4 years",
+                        "Sex: female","Child's age: 1 year","Child's age: 2 years",
+                        "Child's age: 3 years","Child's age: 4 years",
                         "Birth order: 2nd","Birth order: 3d","Birth order: 4th","Birth order: 5th",
-                        "Birth order: 6th +","Polygynous","Mother age: 15-19","Mother age: 20-24",
-                        "Mother age: 30-34","Mother age: 35-39","Mother age: 40+",
-                        "Mother education: primary","Mother education: secondary",
-                        "Mother education: higher","Husband education: primary",
-                        "Husband education: secondary","Husband education: higher",
+                        "Birth order: 6th +","Polygynous","Mother's age: 15-19","Mother's age: 20-24",
+                        "Mother's age: 30-34","Mother's age: 35-39","Mother's age: 40+",
+                        "Mother's education: primary","Mother's education: secondary",
+                        "Mother's education: higher","Husband's education: primary",
+                        "Husband's education: secondary","Husband's education: higher",
                         "Wealth index: poorer","Wealth index: middle","Wealth index: richer",
                         "Wealth index: richest","Urban")) |> 
   saveRDS("plots/fevtreat_table.rds")
@@ -247,14 +247,14 @@ tab_model(fevtreat_model1,fevtreat_model2,fevtreat_model3,show.obs=TRUE,
 tab_model(measles_model1,measles_model2,measles_model3,show.obs=TRUE,
           dv.labels = c("Model 1: age gap","Model 2: children","Model 3: parents"),
           pred.labels=c("Intercept","Age gap: <0","Age gap: 0-4","Age gap: 10-14","Age gap: 15+",
-                        "Sex: female","Child age: 2 years",
-                        "Child age: 3 years","Child age: 4 years",
+                        "Sex: female","Child's age: 2 years",
+                        "Child's age: 3 years","Child's age: 4 years",
                         "Birth order: 2nd","Birth order: 3d","Birth order: 4th","Birth order: 5th",
-                        "Birth order: 6th +","Polygynous","Mother age: 15-19","Mother age: 20-24",
-                        "Mother age: 30-34","Mother age: 35-39","Mother age: 40+",
-                        "Mother education: primary","Mother education: secondary",
-                        "Mother education: higher","Husband education: primary",
-                        "Husband education: secondary","Husband education: higher",
+                        "Birth order: 6th +","Polygynous","Mother's age: 15-19","Mother's age: 20-24",
+                        "Mother's age: 30-34","Mother's age: 35-39","Mother's age: 40+",
+                        "Mother's education: primary","Mother's education: secondary",
+                        "Mother's education: higher","Husband's education: primary",
+                        "Husband's education: secondary","Husband's education: higher",
                         "Wealth index: poorer","Wealth index: middle","Wealth index: richer",
                         "Wealth index: richest","Urban")) |> 
   saveRDS("plots/measles_table.rds")
@@ -262,14 +262,55 @@ tab_model(measles_model1,measles_model2,measles_model3,show.obs=TRUE,
 tab_model(underweight_model1,underweight_model2,underweight_model3,show.obs=TRUE,
           dv.labels = c("Model 1: age gap","Model 2: children","Model 3: parents"),
           pred.labels=c("Intercept","Age gap: <0","Age gap: 0-4","Age gap: 10-14","Age gap: 15+",
-                        "Sex: female","Child age: 1 year","Child age: 2 years",
-                        "Child age: 3 years","Child age: 4 years",
+                        "Sex: female","Child's age: 1 year","Child's age: 2 years",
+                        "Child's age: 3 years","Child's age: 4 years",
                         "Birth order: 2nd","Birth order: 3d","Birth order: 4th","Birth order: 5th",
-                        "Birth order: 6th +","Polygynous","Mother age: 15-19","Mother age: 20-24",
-                        "Mother age: 30-34","Mother age: 35-39","Mother age: 40+",
-                        "Mother education: primary","Mother education: secondary",
-                        "Mother education: higher","Husband education: primary",
-                        "Husband education: secondary","Husband education: higher",
+                        "Birth order: 6th +","Polygynous","Mother's age: 15-19","Mother's age: 20-24",
+                        "Mother's age: 30-34","Mother's age: 35-39","Mother's age: 40+",
+                        "Mother's education: primary","Mother's education: secondary",
+                        "Mother's education: higher","Husband's education: primary",
+                        "Husband's education: secondary","Husband's education: higher",
                         "Wealth index: poorer","Wealth index: middle","Wealth index: richer",
                         "Wealth index: richest","Urban")) |> 
   saveRDS("plots/underweight_table.rds")
+
+
+##################### create new data ############################
+data <- haven::read_dta("thesis_data.dta") |>
+  janitor::clean_names()
+
+# select variables & agediff
+data <- data |> select(country, year, wifenum, kidalive, perweight,
+                       kidsex, kidbord, kidcurage, educlvl,
+                       husedlvl, wealthq, urban, poly, fevtreat, measles, 
+                       underweight, agediff5, agediff, respondent, mage,
+                       healthcardkid, vacev, worm, kidalive,lowbw) |> 
+  mutate(underweight=as_factor(underweight),
+         urban=as_factor(urban),
+         country=as_factor(country),
+         kidalive=as_factor(kidalive),
+         kidsex=as_factor(kidsex),
+         educlvl=as_factor(educlvl),
+         husedlvl=as_factor(husedlvl),
+         wealthq=as_factor(wealthq),
+         poly=as_factor(poly),
+         fevtreat=as_factor(fevtreat),
+         measles=as_factor(measles),
+         agediff5=as_factor(agediff5),
+         agediff5=as.character(agediff5),
+         agediff5=case_when(agediff5==">15"~"15+",
+                            TRUE~agediff5),
+         agediff5=factor(agediff5, levels=c("<0","0-4","5-9","10-14","15+")),
+         kidcurage=as_factor(kidcurage),
+         kidbord=as_factor(kidbord),
+         mage=as_factor(mage) |> relevel(ref="25-29"),
+         kidbord=as_factor(kidbord),
+         healthcardkid=as_factor(healthcardkid),
+         vacev=as_factor(vacev),
+         worm=as_factor(worm),
+         kidalive=as_factor(kidalive),
+         lowbw=as_factor(lowbw)) |> 
+  zap_labels() |> 
+  select(agediff5,fevtreat,measles,underweight,kidsex,kidcurage,kidbord,poly,mage,
+         educlvl,husedlvl,wealthq,urban,perweight,country,respondent) |> 
+  saveRDS(file="cleaned_data.rds")
